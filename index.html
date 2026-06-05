@@ -1,995 +1,203 @@
-```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eis-Waage Pro: Preis & Umwelt-Check</title>
-    <!-- Tailwind CSS für erstklassiges Design -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts für hervorragende Lesbarkeit im Freien -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
-        }
-        h1, h2, h3, h4, .font-display {
-            font-family: 'Outfit', sans-serif;
-        }
-        /* Mobile Scrollbar */
-        .custom-scrollbar::-webkit-scrollbar {
-            height: 5px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        /* Aktiver Nav-Zustand */
-        .tab-active {
-            color: #0d9488;
-            border-top: 3px solid #0d9488;
-        }
-    </style>
-</head>
-<body class="min-h-screen text-slate-800 pb-24">
-
-    <!-- TOP BAR / HEADER -->
-    <header class="bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-sm sticky top-0 z-40">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <span class="text-2xl">🍦</span>
-                <div>
-                    <h1 class="text-lg font-bold tracking-tight">Eis-Waage Pro</h1>
-                    <p class="text-[10px] text-teal-100 font-medium tracking-wide uppercase">Dortmund &amp; Mobil</p>
-                </div>
-            </div>
-            <div class="flex items-center space-x-2">
-                <!-- HANDBUCH-BUTTON -->
-                <button onclick="oeffneHilfeModal()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl px-3 py-1.5 text-xs font-bold transition flex items-center gap-1.5 active:scale-95">
-                    <span>📖</span> Anleitung
-                </button>
-                <div class="bg-teal-700/50 px-2.5 py-1.5 rounded-full text-xs font-semibold text-teal-100 hidden sm:flex items-center gap-1">
-                    <span id="topAnzahl">0 Eisdielen</span>
-                </div>
-            </div>
-        </div>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#2f6f5e">
+    <title>Eisdielen-Rechner</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="kicker">Mobiler Vergleich</p>
+        <h1>Eisdielen-Rechner</h1>
+      </div>
+      <button class="ghost-button" id="newEntryButton" type="button">Neu</button>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 mt-4">
+    <main>
+      <section class="panel form-panel" aria-labelledby="formTitle">
+        <div class="section-heading">
+          <h2 id="formTitle">Messung erfassen</h2>
+          <p>Vanille, Schokolade und Erdbeere sind als Vergleichssorten voreingestellt.</p>
+        </div>
 
-        <!-- TAB 1: MESSUNG EINTRAGEN -->
-        <section id="tab-form" class="space-y-4">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
-                <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-1.5">
-                    <span>✍️</span> 3 Kugeln wiegen &amp; erfassen
-                </h2>
+        <form id="entryForm">
+          <input id="entryId" type="hidden">
 
-                <form id="eisForm" class="space-y-4" onsubmit="speichereEintrag(event)">
-                    
-                    <!-- Ort & Eisdiele -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1" for="name">Eisdiele *</label>
-                            <input type="text" id="name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 outline-none transition" placeholder="z.B. Venezia">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1" for="stadt">Stadt *</label>
-                            <input type="text" id="stadt" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 outline-none transition" placeholder="z.B. Dortmund">
-                        </div>
-                    </div>
+          <div class="grid two">
+            <label>
+              Eisdiele
+              <input id="shopName" name="shopName" autocomplete="organization" required>
+            </label>
+            <label>
+              Ort
+              <input id="location" name="location" autocomplete="address-level2" required>
+            </label>
+          </div>
 
-                    <!-- Preis & Eisgewicht (Netto) -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-amber-50/40 p-3 rounded-xl border border-amber-100">
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-amber-800 mb-1" for="preis">Gesamtpreis (€) *</label>
-                            <div class="relative">
-                                <input type="number" id="preis" step="0.01" min="0.01" required inputmode="decimal" class="w-full bg-white border border-amber-200 rounded-lg pl-3 pr-8 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none transition" placeholder="0.00">
-                                <span class="absolute right-3 top-2 text-slate-400 text-xs font-semibold">€</span>
-                            </div>
-                        </div>
-                        <div class="bg-sky-50/40 p-3 rounded-xl border border-sky-100">
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-sky-800 mb-1" for="gewicht">Eisgewicht Netto (g) *</label>
-                            <div class="relative">
-                                <input type="number" id="gewicht" step="1" min="1" required inputmode="numeric" class="w-full bg-white border border-sky-200 rounded-lg pl-3 pr-8 py-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none transition" placeholder="z.B. 180">
-                                <span class="absolute right-3 top-2 text-slate-400 text-xs font-semibold">g</span>
-                            </div>
-                        </div>
-                    </div>
+          <div class="grid three">
+            <label>
+              Datum
+              <input id="visitDate" name="visitDate" type="date" required>
+            </label>
+            <label>
+              Gesamtpreis in EUR
+              <input id="totalPrice" name="totalPrice" type="number" step="0.01" min="0" inputmode="decimal" required>
+            </label>
+            <label>
+              Anzahl Kugeln
+              <input id="scoopCount" name="scoopCount" type="number" step="1" min="1" value="3" inputmode="numeric" required>
+            </label>
+          </div>
 
-                    <!-- Umweltdaten (Verpackung) -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 bg-emerald-50/10 border border-emerald-100/50 rounded-xl">
-                        <!-- Becher -->
-                        <div class="space-y-2">
-                            <h3 class="text-xs font-bold text-emerald-800 flex items-center gap-1">🥤 Becher-Verpackung</h3>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <select id="becherMaterial" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none" onchange="toggleGewichtInput('becher')">
-                                        <option value="Essbare Waffel">Essb. Waffel</option>
-                                        <option value="Pappe beschichtet" selected>Pappe</option>
-                                        <option value="Bio-Plastik/PLA">Bio-Plastik</option>
-                                        <option value="Plastik">Plastik</option>
-                                    </select>
-                                </div>
-                                <div id="becherGewichtContainer" class="relative">
-                                    <input type="number" id="becherGewicht" step="0.1" min="0" inputmode="decimal" class="w-full bg-white border border-slate-200 rounded-lg pl-2 pr-6 py-1.5 text-xs outline-none" placeholder="g">
-                                    <span class="absolute right-2 top-1.5 text-slate-400 text-[10px]">g</span>
-                                </div>
-                            </div>
-                        </div>
+          <label>
+            Sorten
+            <input id="flavors" name="flavors" value="Vanille, Schokolade, Erdbeere">
+          </label>
 
-                        <!-- Löffel -->
-                        <div class="space-y-2">
-                            <h3 class="text-xs font-bold text-emerald-800 flex items-center gap-1">🥄 Löffel-Verpackung</h3>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <select id="loeffelMaterial" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none" onchange="toggleGewichtInput('loeffel')">
-                                        <option value="Kein Löffel">Kein Löffel</option>
-                                        <option value="Holz" selected>Holzlöffel</option>
-                                        <option value="Essbarer Löffel">Essb. Löffel</option>
-                                        <option value="Mehrweg-Plastik">Mehrweg</option>
-                                        <option value="Plastik">Einweg Pl.</option>
-                                    </select>
-                                </div>
-                                <div id="loeffelGewichtContainer" class="relative">
-                                    <input type="number" id="loeffelGewicht" step="0.1" min="0" inputmode="decimal" class="w-full bg-white border border-slate-200 rounded-lg pl-2 pr-6 py-1.5 text-xs outline-none" placeholder="g">
-                                    <span class="absolute right-2 top-1.5 text-slate-400 text-[10px]">g</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+          <div class="grid three">
+            <label>
+              Gewicht mit Verpackung in g
+              <input id="grossWeight" name="grossWeight" type="number" step="0.1" min="0" inputmode="decimal" required>
+            </label>
+            <label>
+              Bechergewicht in g
+              <input id="cupWeight" name="cupWeight" type="number" step="0.1" min="0" inputmode="decimal" required>
+            </label>
+            <label>
+              Löffelgewicht in g
+              <input id="spoonWeight" name="spoonWeight" type="number" step="0.1" min="0" inputmode="decimal" required>
+            </label>
+          </div>
 
-                    <button type="submit" class="w-full bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-sm text-sm active:scale-[0.99] transition flex justify-center items-center gap-2">
-                        <span>📊</span> Messung auswerten &amp; speichern
-                    </button>
-                </form>
+          <div class="grid two">
+            <label>
+              Bechermaterial
+              <select id="cupMaterial" name="cupMaterial">
+                <option>Papier</option>
+                <option>Beschichtetes Papier</option>
+                <option>Kunststoff</option>
+                <option>PLA/Bioplastik</option>
+                <option>Waffelbecher</option>
+                <option>Mehrweg</option>
+                <option>Sonstiges</option>
+              </select>
+            </label>
+            <label>
+              Löffelmaterial
+              <select id="spoonMaterial" name="spoonMaterial">
+                <option>Holz</option>
+                <option>Kunststoff</option>
+                <option>Papier/Pappe</option>
+                <option>Metall/Mehrweg</option>
+                <option>Kein Löffel</option>
+                <option>Sonstiges</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            Notiz
+            <textarea id="notes" name="notes" rows="3" placeholder="z. B. Waage, Bon, Besonderheiten, Messunsicherheit"></textarea>
+          </label>
+
+          <div class="photo-zone">
+            <label class="file-label">
+              Fotos hinzufügen
+              <input id="photoInput" type="file" accept="image/*" capture="environment" multiple>
+            </label>
+            <div id="photoPreview" class="photo-preview" aria-live="polite"></div>
+          </div>
+
+          <div class="result-strip" aria-live="polite">
+            <div>
+              <span>Nettogewicht</span>
+              <strong id="netWeightPreview">0 g</strong>
             </div>
-
-            <!-- AKTUELLER BERICHT NACH EINTRAG -->
-            <div id="ergebnisSektion" class="hidden bg-white rounded-2xl shadow-sm border border-teal-100 overflow-hidden">
-                <div class="bg-teal-50/50 px-4 py-3 flex justify-between items-center border-b border-teal-100/50">
-                    <h3 class="font-bold text-teal-900 text-xs flex items-center gap-1">
-                        <span>📝</span> Aktueller Bericht (Sofort-Auswertung)
-                    </h3>
-                    <div class="flex gap-2">
-                        <button id="btnAktuellerTeilen" class="text-[10px] bg-teal-600 hover:bg-teal-700 text-white font-bold px-2.5 py-1.5 rounded-lg transition active:scale-95">
-                            📢 Rezension generieren
-                        </button>
-                    </div>
-                </div>
-                <div class="p-4">
-                    <p id="ergebnisText" class="text-slate-600 leading-relaxed text-xs italic"></p>
-                    <div class="mt-3 flex flex-wrap gap-2">
-                        <span id="badgePreis" class="bg-teal-100/60 text-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-full">--</span>
-                        <span id="badgeEco" class="bg-emerald-100/60 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">--</span>
-                    </div>
-                </div>
+            <div>
+              <span>pro Kugel</span>
+              <strong id="avgScoopPreview">0 g</strong>
             </div>
-        </section>
-
-        <!-- TAB 2: TABELLARISCHE AUSWERTUNG & ERGEBNISSE -->
-        <section id="tab-report" class="space-y-4 hidden">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div class="p-4 bg-slate-50 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                        <h2 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                            <span>🏆</span> Vergleichstabelle (Sortiert nach Preis/100g)
-                        </h2>
-                        <p class="text-[10px] text-slate-500 mt-0.5">Automatisch sortiert: Bester Preis (Gewicht im Verhältnis zum Preis) ganz oben.</p>
-                    </div>
-                </div>
-
-                <!-- TABLE VIEW (Tablet & iPad im Querformat) -->
-                <div class="overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-100/60 border-b border-slate-200 text-slate-500 font-bold">
-                                <th class="px-3 py-3 text-center w-10">Rang</th>
-                                <th class="px-3 py-3">Eisdiele / Stadt</th>
-                                <th class="px-3 py-3 text-right">Eisgew. (g)</th>
-                                <th class="px-3 py-3 text-right">Preis / Kugel</th>
-                                <th class="px-3 py-3 text-right font-extrabold text-teal-800 bg-teal-50/50">Preis / 100g</th>
-                                <th class="px-3 py-3 text-center">Becher-Gewicht</th>
-                                <th class="px-3 py-3 text-center">Löffel-Gewicht</th>
-                                <th class="px-3 py-3 text-center">Eco-Score</th>
-                                <th class="px-3 py-3 text-center">Aktionen</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelleBody" class="divide-y divide-slate-100">
-                            <!-- JS befüllt diesen Bereich -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div id="leereTabelleInfo" class="p-8 text-center text-slate-400 text-xs">
-                    Noch keine Testergebnisse vorhanden. Starte deine erste Wiege-Messung!
-                </div>
+            <div>
+              <span>Preis je 100 g</span>
+              <strong id="price100Preview">0 EUR</strong>
             </div>
-
-            <!-- SMARTPHONE VIEW (Kompakte Karten im Hochformat) -->
-            <div class="md:hidden space-y-3">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ergebnis-Karten für unterwegs</h3>
-                <div id="cardGridBody" class="grid grid-cols-1 gap-3">
-                    <!-- Cards per JS -->
-                </div>
+            <div>
+              <span>Verpackung</span>
+              <strong id="packagingPreview">0 g</strong>
             </div>
-        </section>
+          </div>
 
-        <!-- TAB 3: BACKUP / ICLOUD / SYNC -->
-        <section id="tab-cloud" class="space-y-4 hidden">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 space-y-6">
-                
-                <!-- iCloud Support -->
-                <div class="space-y-2">
-                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                        <span>📁</span> iCloud Backup &amp; Dateiverwaltung
-                    </h3>
-                    <p class="text-xs text-slate-500 leading-relaxed">
-                        Nutze diese Funktion, um dein laufendes Experiment auf dem iPad zu sichern. Exportiere ein Backup direkt in deine Dateien-App unter <strong>iCloud Drive</strong>. Beim nächsten Mal liest du die Datei einfach wieder ein und erweiterst deine Daten unbegrenzt.
-                    </p>
-                    <div class="grid grid-cols-2 gap-3 pt-1">
-                        <button onclick="exportiereAlsDatei()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 px-3 rounded-xl text-xs transition flex justify-center items-center gap-1.5 active:scale-95">
-                            <span>📤</span> Exportieren
-                        </button>
-                        <label class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 px-3 rounded-xl text-xs transition flex justify-center items-center gap-1.5 active:scale-95 cursor-pointer text-center">
-                            <span>📥</span> Einlesen / Erweitern
-                            <input type="file" id="importDatei" accept=".json" class="hidden" onchange="importiereAusDatei(event)">
-                        </label>
-                    </div>
-                </div>
+          <div class="button-row">
+            <button class="primary-button" type="submit">Speichern</button>
+            <button class="secondary-button" id="clearButton" type="button">Zurücksetzen</button>
+          </div>
+        </form>
+      </section>
 
-                <!-- Echtzeit Cloud Sync -->
-                <div class="border-t border-slate-100 pt-5 space-y-2">
-                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                        <span>☁️</span> Automatische Echtzeit-Synchronisation
-                    </h3>
-                    <p class="text-xs text-slate-500 leading-relaxed">
-                        Möchtest du Werte direkt vom Handy eingeben und sofort live auf dem iPad zuhause sehen? Aktiviere hier einen geheimen, selbst gewählten Sync-Schlüssel.
-                    </p>
-                    <div class="space-y-2 pt-1">
-                        <input type="text" id="syncSchluessel" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:ring-2 focus:ring-teal-500 outline-none transition" placeholder="z.B. eis-check-dortmund-2026">
-                        <div class="flex gap-2">
-                            <button onclick="verbindeCloudSync()" class="flex-1 bg-teal-500 hover:bg-teal-600 text-white font-bold py-2.5 px-3 rounded-xl text-xs transition active:scale-95">
-                                Sync verbinden
-                            </button>
-                            <button id="btnSyncTrennen" onclick="trenneCloudSync()" class="hidden bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold py-2.5 px-3 rounded-xl text-xs transition">
-                                Sync trennen
-                            </button>
-                        </div>
-                    </div>
-                    <p class="text-[10px] text-slate-400 flex items-center gap-1" id="syncStatusText">
-                        <span>🔴</span> Status: Offline (Lokal auf diesem Gerät)
-                    </p>
-                </div>
+      <section class="panel" aria-labelledby="actionsTitle">
+        <div class="section-heading compact">
+          <h2 id="actionsTitle">Daten und iCloud</h2>
+          <p>Exportierte Dateien können in iCloud Drive gespeichert und später wieder geladen werden.</p>
+        </div>
+        <div class="button-row wrap">
+          <button class="secondary-button" id="exportJsonButton" type="button">JSON exportieren</button>
+          <button class="secondary-button" id="exportCsvButton" type="button">CSV exportieren</button>
+          <button class="secondary-button" id="shareButton" type="button">Teilen</button>
+          <label class="import-button">
+            Laden
+            <input id="importInput" type="file" accept="application/json,.json">
+          </label>
+        </div>
+      </section>
 
-                <!-- Zurücksetzen -->
-                <div class="border-t border-slate-100 pt-5 flex justify-between items-center">
-                    <div>
-                        <h4 class="text-xs font-bold text-rose-800">Datenbank leeren</h4>
-                        <p class="text-[10px] text-slate-400">Setzt alle Werte auf diesem Gerät auf Werkseinstellungen zurück.</p>
-                    </div>
-                    <button onclick="oeffneResetModal()" class="text-xs font-bold text-rose-600 bg-rose-50 border border-rose-100 hover:bg-rose-100 px-3 py-2 rounded-xl transition duration-200">
-                        Alles löschen
-                    </button>
-                </div>
-            </div>
-        </section>
+      <section class="panel" aria-labelledby="tableTitle">
+        <div class="section-heading compact">
+          <h2 id="tableTitle">Ergebnisse</h2>
+          <p id="summaryLine">Noch keine Einträge.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Eisdiele</th>
+                <th>Ort</th>
+                <th>Datum</th>
+                <th>Kugel</th>
+                <th>EUR/100 g</th>
+                <th>Verpackung</th>
+                <th>Fotos</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="entriesBody"></tbody>
+          </table>
+        </div>
+      </section>
 
+      <section class="panel report-panel" aria-labelledby="reportTitle">
+        <div class="section-heading compact">
+          <h2 id="reportTitle">Bericht</h2>
+          <p>Wähle einen Eintrag aus der Tabelle, um die sachliche Zusammenfassung zu sehen.</p>
+        </div>
+        <div class="report-box" id="reportBox">Noch kein Bericht ausgewählt.</div>
+        <div class="button-row">
+          <button class="secondary-button" id="copyReportButton" type="button">Bericht kopieren</button>
+          <button class="secondary-button" id="copyReviewButton" type="button">Kurztext kopieren</button>
+        </div>
+      </section>
     </main>
 
-    <!-- MOBILE SYSTEM LEISTE (Bottom Bar) -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-lg z-40">
-        <div class="max-w-md mx-auto grid grid-cols-3 h-16">
-            <button onclick="switchTab('form')" id="btn-tab-form" class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition tab-active">
-                <span class="text-xl">✍️</span>
-                <span class="text-[10px] font-semibold mt-0.5">Wiegen</span>
-            </button>
-            <button onclick="switchTab('report')" id="btn-tab-report" class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition">
-                <span class="text-xl">📊</span>
-                <span class="text-[10px] font-semibold mt-0.5">Ergebnisse</span>
-            </button>
-            <button onclick="switchTab('cloud')" id="btn-tab-cloud" class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition">
-                <span class="text-xl">📁</span>
-                <span class="text-[10px] font-semibold mt-0.5">Sichern</span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- TOAST BENACHRICHTIGUNGEN -->
-    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition duration-300 pointer-events-none text-xs">
-        <span id="toastIcon">✨</span>
-        <span id="toastMessage">Meldung</span>
-    </div>
-
-    <!-- MODAL 1: HANDBUCH / HILFE -->
-    <div id="hilfeModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 flex flex-col max-h-[85vh]">
-            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-1.5">📖 Experiment-Handbuch</h3>
-                <button onclick="schliesseHilfeModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl px-2">×</button>
-            </div>
-            
-            <div class="overflow-y-auto py-4 space-y-4 text-xs text-slate-600 leading-relaxed custom-scrollbar flex-1">
-                <div class="bg-teal-50 p-3 rounded-xl border border-teal-100">
-                    <h4 class="font-bold text-teal-900 mb-1">Das Ziel des Experiments</h4>
-                    <p>Du deckst auf, wie viel Gramm Speiseeis du an verschiedenen Orten tatsächlich für dein Geld bekommst. Zudem bewertest du die Umweltbilanz des Verpackungsmaterials.</p>
-                </div>
-                
-                <div class="space-y-1">
-                    <h4 class="font-bold text-slate-900">1. Perfekt wiegen (Der "Tara"-Trick):</h4>
-                    <p>Um die Verkäufer nicht nervös zu machen, kannst du Becher & Löffel vorab oder nach dem Genuss leer wiegen. Ziehe das Leergewicht einfach vom Gesamtgewicht (Brutto) ab. So erhältst du das reine Nettogewicht des Eises.</p>
-                </div>
-
-                <div class="space-y-1">
-                    <h4 class="font-bold text-slate-900">2. Für optimale Vergleichbarkeit:</h4>
-                    <p>Bestelle immer exakt 3 Kugeln und wechsle die Sorten nicht! Am besten eignet sich das bewährte Standard-Trio: <strong>1x Vanille, 1x Schokolade, 1x Erdbeere</strong>. Dadurch schließt du Gewichtsschwankungen durch Rezepturen weitestgehend aus.</p>
-                </div>
-
-                <div class="space-y-1">
-                    <h4 class="font-bold text-slate-900">3. Das Umwelt-Bewertungssystem (Eco-Score):</h4>
-                    <ul class="list-disc pl-4 space-y-1">
-                        <li><strong>⭐5 (Ausgezeichnet):</strong> Essbare Waffel / Löffel. Kein Müll bleibt zurück.</li>
-                        <li><strong>⭐4 (Gut):</strong> Reines Holz, Papier unbeschichtet. Biologisch leicht abbaubar.</li>
-                        <li><strong>⭐3 (Akzeptabel):</strong> Beschichtete Pappe oder Bio-Plastik (PLA).</li>
-                        <li><strong>⭐1-2 (Mangelhaft):</strong> Konventioneller Einweg-Plastikmüll.</li>
-                    </ul>
-                </div>
-
-                <div class="space-y-1">
-                    <h4 class="font-bold text-slate-900">4. iCloud Backup:</h4>
-                    <p>Gehe auf den Tab <strong>Sichern</strong>, klicke auf "Exportieren" und sichere die geladene JSON-Datei direkt auf deinem iPad im Verzeichnis "iCloud Drive". Zum Fortsetzen deines Tests auf anderen Geräten liest du die Datei einfach dort wieder ein.</p>
-                </div>
-            </div>
-            
-            <button onclick="schliesseHilfeModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 rounded-xl text-xs transition mt-2">
-                Alles verstanden!
-            </button>
-        </div>
-    </div>
-
-    <!-- MODAL 2: REZENSION & WHATSAPP TEILEN -->
-    <div id="teilenModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl border border-slate-100">
-            <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4">
-                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">📢 Rezension &amp; Text teilen</h3>
-                <button onclick="schliesseTeilenModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg px-2">×</button>
-            </div>
-            
-            <div class="space-y-3">
-                <p class="text-xs text-slate-500">Dieser kompakte Bericht wurde automatisch für dich generiert. Perfekt als Whatsapp-Nachricht oder Google-Rezension:</p>
-                
-                <!-- Kasten mit dem fertigen Rezensionstext -->
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-700 font-mono whitespace-pre-wrap select-all max-h-56 overflow-y-auto" id="teilenInhalt">
-                    <!-- JS befüllt das -->
-                </div>
-
-                <div class="grid grid-cols-2 gap-2.5 pt-2">
-                    <!-- Text kopieren -->
-                    <button onclick="kopiereTextAusTeilen()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition flex justify-center items-center gap-1.5">
-                        📋 Text kopieren
-                    </button>
-                    <!-- Per WhatsApp teilen -->
-                    <a id="whatsappLink" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs transition flex justify-center items-center gap-1.5 cursor-pointer">
-                        💬 WhatsApp
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL 3: ZURÜCKSETZEN BESTÄTIGUNG -->
-    <div id="resetModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100">
-            <div class="w-10 h-10 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-lg mb-3 mx-auto">⚠️</div>
-            <h3 class="text-base font-bold text-slate-900 text-center">Daten unwiderruflich löschen?</h3>
-            <p class="text-slate-400 text-xs text-center mt-1.5 leading-relaxed">Möchtest du alle eingetragenen Eisdielen löschen? Dein lokales Backup wird gelöscht.</p>
-            <div class="grid grid-cols-2 gap-2.5 mt-5">
-                <button onclick="schliesseResetModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 rounded-xl text-xs transition">Abbrechen</button>
-                <button onclick="datenResetten()" class="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 rounded-xl text-xs transition">Ja, löschen</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Firebase Integration -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, collection, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'eisdielen-tester-pro-v2';
-        
-        let db = null;
-        let auth = null;
-        let unsubscribeFirestore = null;
-        let userAuthenticated = false;
-
-        if (firebaseConfig) {
-            try {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                signInAnonymously(auth).then(() => {
-                    userAuthenticated = true;
-                }).catch(err => console.error("Anonyme Anmeldung fehlgeschlagen", err));
-            } catch (e) {
-                console.warn("Cloud Sync offline.", e);
-            }
-        }
-
-        window.db = db;
-        window.auth = auth;
-        window.appId = appId;
-        window.userAuthenticated = userAuthenticated;
-        window.unsubscribeFirestore = unsubscribeFirestore;
-    </script>
-
-    <script>
-        let eisdielen = [];
-        let currentSyncKey = "";
-        let ausgewaehltesEisFuerTeilen = null;
-
-        // Navigation
-        function switchTab(tabId) {
-            document.getElementById('tab-form').classList.add('hidden');
-            document.getElementById('tab-report').classList.add('hidden');
-            document.getElementById('tab-cloud').classList.add('hidden');
-
-            document.getElementById('btn-tab-form').classList.remove('tab-active');
-            document.getElementById('btn-tab-report').classList.remove('tab-active');
-            document.getElementById('btn-tab-cloud').classList.remove('tab-active');
-
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            document.getElementById(`btn-tab-${tabId}`).classList.add('tab-active');
-            
-            if (tabId === 'report') {
-                aktualisiereTabelle();
-            }
-        }
-
-        // Steuerung der Gewichtsfelder
-        function toggleGewichtInput(typ) {
-            const materialSelect = document.getElementById(`${typ}Material`);
-            const gewichtContainer = document.getElementById(`${typ}GewichtContainer`);
-            const gewichtInput = document.getElementById(`${typ}Gewicht`);
-
-            if (materialSelect.value === 'Essbare Waffel' || materialSelect.value === 'Kein Löffel' || materialSelect.value === 'Essbarer Löffel') {
-                gewichtContainer.classList.add('hidden');
-                gewichtInput.required = false;
-                gewichtInput.value = '0';
-            } else {
-                gewichtContainer.classList.remove('hidden');
-                if (gewichtInput.value === '0') gewichtInput.value = '';
-                gewichtInput.required = true;
-            }
-        }
-
-        // Berechnet den Umwelt-Eco-Score (1 bis 5)
-        function berechneEcoScore(becherMat, becherGew, loeffelMat, loeffelGew) {
-            let becherPunkte = 5;
-            let loeffelPunkte = 5;
-
-            if (becherMat === 'Essbare Waffel') becherPunkte = 5;
-            else if (becherMat === 'Bio-Plastik/PLA') becherPunkte = 3;
-            else if (becherMat === 'Pappe beschichtet') becherPunkte = 3;
-            else if (becherMat === 'Plastik') becherPunkte = 1;
-
-            if (loeffelMat === 'Kein Löffel' || loeffelMat === 'Essbarer Löffel') loeffelPunkte = 5;
-            else if (loeffelMat === 'Holz') loeffelPunkte = 4;
-            else if (loeffelMat === 'Mehrweg-Plastik') loeffelPunkte = 3;
-            else if (loeffelMat === 'Plastik') loeffelPunkte = 1;
-
-            const gesamtGewicht = Number(becherGew) + Number(loeffelGew);
-            let gewichtsMalus = 0;
-            if (gesamtGewicht > 15 && becherMat !== 'Essbare Waffel') gewichtsMalus = 1;
-
-            return Math.max(1, Math.round((becherPunkte + loeffelPunkte) / 2) - gewichtsMalus);
-        }
-
-        function getEcoLabel(score) {
-            switch(score) {
-                case 5: return { text: "Müllfrei 🌱", class: "bg-emerald-100 text-emerald-800" };
-                case 4: return { text: "Gut 🟢", class: "bg-green-100 text-green-800" };
-                case 3: return { text: "Akzeptabel 🟡", class: "bg-yellow-100 text-yellow-800" };
-                case 2: return { text: "Kritisch 🟠", class: "bg-orange-100 text-orange-800" };
-                default: return { text: "Plastik-Müll 🔴", class: "bg-rose-100 text-rose-800" };
-            }
-        }
-
-        // --- GENERATOR FÜR WHATSAPP / REZENSION ---
-        function generiereTeilenText(e) {
-            const becherText = e.becherMaterial === "Essbare Waffel" 
-                ? "🍦 Essbare Waffel (müllfrei!)" 
-                : `🥤 Becher aus ${e.becherMaterial} (${e.becherGewicht.toFixed(1)}g)`;
-
-            const loeffelText = e.loeffelMaterial === "Kein Löffel" 
-                ? "❌ Kein Löffel verwendet" 
-                : (e.loeffelMaterial === "Essbarer Löffel" ? "🥄 Essbarer Löffel (müllfrei!)" : `🥄 Löffel aus ${e.loeffelMaterial} (${e.loeffelGewicht.toFixed(1)}g)`);
-
-            const ecoSterne = "⭐".repeat(e.ecoScore);
-
-            return `🍦 EISDIELEN-TESTER: ${e.name} (${e.stadt})\n` +
-                   `-----------------------------------\n` +
-                   `⚖️ Gewicht (3 Kugeln): ${e.gewicht}g\n` +
-                   `💰 Preis pro Kugel (Soll): ${(e.preis / 3).toFixed(2)} €\n` +
-                   `📈 Preis pro 100g (Ist): ${e.preisPro100g.toFixed(2)} €\n` +
-                   `-----------------------------------\n` +
-                   `🌱 Umwelt-Check:\n` +
-                   `• Becher: ${becherText}\n` +
-                   `• Löffel: ${loeffelText}\n` +
-                   `• Eco-Rating: ${ecoSterne} (${getEcoLabel(e.ecoScore).text})\n` +
-                   `-----------------------------------\n` +
-                   `Gemessen & analysiert mit der mobilen Eis-Waage Pro App!`;
-        }
-
-        function oeffneTeilenModal(eId) {
-            const e = eisdielen.find(x => x.id === eId);
-            if (!e) return;
-            ausgewaehltesEisFuerTeilen = e;
-            
-            const text = generiereTeilenText(e);
-            document.getElementById('teilenInhalt').textContent = text;
-            
-            // WhatsApp Link befüllen
-            const encodedText = encodeURIComponent(text);
-            document.getElementById('whatsappLink').href = `https://api.whatsapp.com/send?text=${encodedText}`;
-
-            document.getElementById('teilenModal').classList.remove('hidden');
-        }
-
-        function schliesseTeilenModal() {
-            document.getElementById('teilenModal').classList.add('hidden');
-            ausgewaehltesEisFuerTeilen = null;
-        }
-
-        function kopiereTextAusTeilen() {
-            const textContent = document.getElementById('teilenInhalt').textContent;
-            const tempInput = document.createElement("textarea");
-            tempInput.value = textContent;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            
-            zeigeToast("Rezensionstext wurde kopiert!", "📋");
-            schliesseTeilenModal();
-        }
-
-        // --- HAUPT LOGIK FÜR EINTRÄGE ---
-
-        function speichereEintrag(event) {
-            event.preventDefault();
-
-            const name = document.getElementById('name').value.trim();
-            const stadt = document.getElementById('stadt').value.trim();
-            const preis = parseFloat(document.getElementById('preis').value);
-            const gewicht = parseInt(document.getElementById('gewicht').value);
-            const becherMaterial = document.getElementById('becherMaterial').value;
-            const becherGewicht = parseFloat(document.getElementById('becherGewicht').value) || 0;
-            const loeffelMaterial = document.getElementById('loeffelMaterial').value;
-            const loeffelGewicht = parseFloat(document.getElementById('loeffelGewicht').value) || 0;
-
-            const preisPro100g = (preis / gewicht) * 100;
-            const ecoScore = berechneEcoScore(becherMaterial, becherGewicht, loeffelMaterial, loeffelGewicht);
-
-            const neuerEintrag = {
-                id: Date.now().toString(),
-                name,
-                stadt,
-                preis,
-                gewicht,
-                preisPro100g,
-                becherMaterial,
-                becherGewicht,
-                loeffelMaterial,
-                loeffelGewicht,
-                ecoScore,
-                cloudSaved: false
-            };
-
-            eisdielen.push(neuerEintrag);
-            localStorage.setItem('eisdielenDaten', JSON.stringify(eisdielen));
-
-            if (currentSyncKey) {
-                ladeInCloudHoch(neuerEintrag);
-            }
-
-            aktualisiereTabelle();
-            zeigeErgebnisText(neuerEintrag);
-            zeigeToast("Messung erfolgreich hinzugefügt!", "✅");
-
-            // Event-Listener für aktuellen Bericht neu binden
-            document.getElementById('btnAktuellerTeilen').onclick = () => oeffneTeilenModal(neuerEintrag.id);
-
-            // Felder für nächsten Test leeren (Name & Ort bleiben stehen für Schnelligkeit)
-            document.getElementById('preis').value = '';
-            document.getElementById('gewicht').value = '';
-            document.getElementById('becherGewicht').value = '0';
-            document.getElementById('loeffelGewicht').value = '0';
-            toggleGewichtInput('becher');
-            toggleGewichtInput('loeffel');
-        }
-
-        function zeigeErgebnisText(eintrag) {
-            const sektion = document.getElementById('ergebnisSektion');
-            const txt = document.getElementById('ergebnisText');
-            
-            const becherText = eintrag.becherMaterial === "Essbare Waffel" 
-                ? "eine essbare Waffel (müllfrei)" 
-                : `ein Becher aus ${eintrag.becherMaterial} (${eintrag.becherGewicht.toFixed(1)}g)`;
-
-            const loeffelText = eintrag.loeffelMaterial === "Kein Löffel" 
-                ? "kein Löffel"
-                : (eintrag.loeffelMaterial === "Essbarer Löffel" ? "ein essbarer Löffel (müllfrei)" : `ein Löffel aus ${eintrag.loeffelMaterial} (${eintrag.loeffelGewicht.toFixed(1)}g)`);
-
-            txt.textContent = `Die Eisdiele "${eintrag.name}" in ${eintrag.stadt} bietet 3 Kugeln Eis für ${eintrag.preis.toFixed(2)} € an. Das reine Eisgewicht beträgt ${eintrag.gewicht}g, woraus ein Preis von ${eintrag.preisPro100g.toFixed(2)} € pro 100g resultiert. Die Verpackung bestand aus: ${becherText} und ${loeffelText}.`;
-
-            document.getElementById('badgePreis').textContent = `${eintrag.preisPro100g.toFixed(2)} € / 100g`;
-            
-            const ecoLabel = getEcoLabel(eintrag.ecoScore);
-            const badgeEco = document.getElementById('badgeEco');
-            badgeEco.textContent = `Umwelt: ${ecoLabel.text}`;
-
-            sektion.classList.remove('hidden');
-        }
-
-        // Rendert Tabelle & Mobile-Ansichten
-        function aktualisiereTabelle() {
-            const body = document.getElementById('tabelleBody');
-            const cardGrid = document.getElementById('cardGridBody');
-            const leereMeldung = document.getElementById('leereTabelleInfo');
-            const topAnzahl = document.getElementById('topAnzahl');
-
-            // Sortieren: Günstigster Preis/100g zuerst
-            const sortierteListe = [...eisdielen].sort((a, b) => a.preisPro100g - b.preisPro100g);
-
-            body.innerHTML = '';
-            cardGrid.innerHTML = '';
-            topAnzahl.textContent = `${eisdielen.length} Eisdiele${eisdielen.length === 1 ? '' : 'n'}`;
-
-            if (sortierteListe.length === 0) {
-                leereMeldung.classList.remove('hidden');
-                return;
-            } else {
-                leereMeldung.classList.add('hidden');
-            }
-
-            sortierteListe.forEach((e, index) => {
-                const rang = index + 1;
-                let rangBadge = "";
-                let bgRow = "hover:bg-slate-50 transition";
-
-                if (rang === 1) {
-                    rangBadge = `<span class="bg-amber-100 text-amber-800 font-extrabold rounded-full px-2.5 py-0.5 border border-amber-200">🏆 1</span>`;
-                    bgRow = "bg-teal-50/20 hover:bg-teal-50/40 transition border-l-4 border-l-teal-500";
-                } else if (rang === 2) {
-                    rangBadge = `<span class="bg-slate-100 text-slate-800 font-extrabold rounded-full px-2.5 py-0.5 border border-slate-200">🥈 2</span>`;
-                } else if (rang === 3) {
-                    rangBadge = `<span class="bg-orange-100 text-orange-800 font-extrabold rounded-full px-2.5 py-0.5 border border-orange-200">🥉 3</span>`;
-                } else {
-                    rangBadge = `<span class="text-slate-500 font-bold">${rang}</span>`;
-                }
-
-                let preisKlasse = "text-emerald-700 font-bold";
-                if (e.preisPro100g > 3.20) preisKlasse = "text-rose-600 font-bold";
-                else if (e.preisPro100g > 2.50) preisKlasse = "text-amber-700 font-bold";
-
-                // Tabellen-Zeile (Desktop & iPad)
-                const row = document.createElement('tr');
-                row.className = bgRow;
-                row.innerHTML = `
-                    <td class="px-3 py-4 text-center font-bold">${rangBadge}</td>
-                    <td class="px-3 py-4">
-                        <div class="font-bold text-slate-950">${e.name}</div>
-                        <div class="text-[10px] text-slate-500">${e.stadt}</div>
-                    </td>
-                    <td class="px-3 py-4 text-right font-medium text-slate-700">${e.gewicht}g</td>
-                    <td class="px-3 py-4 text-right text-slate-500">${(e.preis / 3).toFixed(2)} €</td>
-                    <td class="px-3 py-4 text-right font-black ${preisKlasse} bg-teal-50/10">${e.preisPro100g.toFixed(2)} €</td>
-                    <td class="px-3 py-4 text-center text-slate-600 text-[11px]">
-                        <div>${e.becherMaterial}</div>
-                        <span class="text-[9px] text-slate-400">${e.becherGewicht > 0 ? e.becherGewicht + "g" : "müllfrei"}</span>
-                    </td>
-                    <td class="px-3 py-4 text-center text-slate-600 text-[11px]">
-                        <div>${e.loeffelMaterial}</div>
-                        <span class="text-[9px] text-slate-400">${e.loeffelGewicht > 0 ? e.loeffelGewicht + "g" : "müllfrei"}</span>
-                    </td>
-                    <td class="px-3 py-4 text-center whitespace-nowrap">
-                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${getEcoLabel(e.ecoScore).class}">
-                            ${getEcoLabel(e.ecoScore).text}
-                        </span>
-                    </td>
-                    <td class="px-3 py-4 text-center">
-                        <div class="flex items-center justify-center gap-2">
-                            <button onclick="oeffneTeilenModal('${e.id}')" class="bg-teal-50 hover:bg-teal-100 text-teal-700 font-bold px-2 py-1 rounded-lg text-[11px]" title="Teilen &amp; Rezension">
-                                📢 Teilen
-                            </button>
-                            <button onclick="loescheEintrag('${e.id}', '${e.cloudId || ""}')" class="text-slate-300 hover:text-rose-600 transition p-1">
-                                🗑️
-                            </button>
-                        </div>
-                    </td>
-                `;
-                body.appendChild(row);
-
-                // Mobile Card (Smartphone)
-                const card = document.createElement('div');
-                card.className = `bg-white p-4 rounded-xl border ${rang === 1 ? 'border-teal-200 bg-teal-50/10' : 'border-slate-100'} space-y-3 shadow-sm`;
-                card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <div class="flex items-center gap-1.5">
-                                ${rangBadge}
-                                <span class="font-extrabold text-slate-900">${e.name}</span>
-                            </div>
-                            <span class="text-[10px] text-slate-500">${e.stadt}</span>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-xs text-slate-400">Preis/100g</div>
-                            <div class="text-sm font-black ${preisKlasse}">${e.preisPro100g.toFixed(2)} €</div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 text-[11px] bg-slate-50 p-2 rounded-lg">
-                        <div>⚖️ Eisgewicht: <strong class="text-slate-800">${e.gewicht}g</strong></div>
-                        <div>💰 Gesamtpreis: <strong class="text-slate-800">${e.preis.toFixed(2)} €</strong></div>
-                    </div>
-                    <div class="flex justify-between items-center text-[10px] pt-1">
-                        <span class="px-2 py-0.5 rounded-full font-bold ${getEcoLabel(e.ecoScore).class}">${getEcoLabel(e.ecoScore).text}</span>
-                        <div class="flex gap-2">
-                            <button onclick="oeffneTeilenModal('${e.id}')" class="bg-teal-50 hover:bg-teal-100 text-teal-700 font-extrabold px-3 py-1.5 rounded-lg">
-                                📢 Text teilen
-                            </button>
-                            <button onclick="loescheEintrag('${e.id}', '${e.cloudId || ""}')" class="bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-rose-600 px-3 py-1.5 rounded-lg">
-                                🗑️
-                            </button>
-                        </div>
-                    </div>
-                `;
-                cardGrid.appendChild(card);
-            });
-        }
-
-        function loescheEintrag(id, cloudId) {
-            eisdielen = eisdielen.filter(e => e.id !== id);
-            localStorage.setItem('eisdielenDaten', JSON.stringify(eisdielen));
-
-            if (cloudId && window.db) {
-                try {
-                    const docRef = window.db.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'eisdielen', cloudId);
-                    window.db.deleteDoc(docRef);
-                } catch(err) {
-                    console.error("Cloud-Löschfehler:", err);
-                }
-            }
-
-            aktualisiereTabelle();
-            document.getElementById('ergebnisSektion').classList.add('hidden');
-            zeigeToast("Messung wurde gelöscht", "🗑️");
-        }
-
-        // --- MANUELLES ICLOUD BACKUP ---
-
-        function exportiereAlsDatei() {
-            if (eisdielen.length === 0) {
-                zeigeToast("Keine Daten zum Sichern vorhanden!", "⚠️");
-                return;
-            }
-            const blob = new Blob([JSON.stringify(eisdielen, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `eis_waage_backup_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
-            zeigeToast("Backup geladen! In iCloud sichern.", "💾");
-        }
-
-        function importiereAusDatei(event) {
-            const datei = event.target.files[0];
-            if (!datei) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importDaten = JSON.parse(e.target.result);
-                    if (Array.isArray(importDaten)) {
-                        const zusammengefuehrt = [...eisdielen];
-                        
-                        importDaten.forEach(neu => {
-                            if (!zusammengefuehrt.some(alt => alt.id === neu.id)) {
-                                zusammengefuehrt.push(neu);
-                                if (currentSyncKey) {
-                                    ladeInCloudHoch(neu);
-                                }
-                            }
-                        });
-
-                        eisdielen = zusammengefuehrt;
-                        localStorage.setItem('eisdielenDaten', JSON.stringify(eisdielen));
-                        aktualisiereTabelle();
-                        zeigeToast("Daten aus iCloud importiert!", "📥");
-                    } else {
-                        zeigeToast("Fehlerhaftes Dateiformat!", "❌");
-                    }
-                } catch {
-                    zeigeToast("Datei konnte nicht gelesen werden!", "❌");
-                }
-            };
-            reader.readAsText(datei);
-        }
-
-        // --- AUTOMATISCHE CLOUD SYNC ---
-
-        async function verbindeCloudSync() {
-            const schluessel = document.getElementById('syncSchluessel').value.trim();
-            if (!schluessel) {
-                zeigeToast("Schlüssel darf nicht leer sein!", "⚠️");
-                return;
-            }
-            if (!window.db) {
-                zeigeToast("Cloud-Dienste zurzeit offline.", "⚠️");
-                return;
-            }
-
-            currentSyncKey = schluessel;
-            localStorage.setItem('eisdielenSyncKey', schluessel);
-
-            document.getElementById('syncStatusText').innerHTML = `<span>🟢</span> Status: Synchronisiert mit "${schluessel}"`;
-            document.getElementById('btnSyncTrennen').classList.remove('hidden');
-
-            if (window.unsubscribeFirestore) {
-                window.unsubscribeFirestore();
-            }
-
-            try {
-                // Regel 1 & 2 Konformität (Pfad & Einfache Query)
-                const queryRef = window.db.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'eisdielen');
-                
-                window.unsubscribeFirestore = window.db.onSnapshot(queryRef, (snapshot) => {
-                    const tempCloudData = [];
-                    snapshot.forEach(doc => {
-                        const daten = doc.data();
-                        if (daten.syncKey === currentSyncKey) {
-                            tempCloudData.push({ id: doc.id, ...daten });
-                        }
-                    });
-
-                    if (tempCloudData.length > 0 || (eisdielen.length > 0 && tempCloudData.length === 0)) {
-                        const unsynced = eisdielen.filter(l => !l.cloudSaved && !tempCloudData.some(c => c.localId === l.id));
-                        if (unsynced.length > 0) {
-                            unsynced.forEach(e => ladeInCloudHoch(e));
-                        } else {
-                            eisdielen = tempCloudData.map(c => ({
-                                id: c.localId || c.id,
-                                cloudId: c.id,
-                                cloudSaved: true,
-                                name: c.name,
-                                stadt: c.stadt,
-                                preis: c.preis,
-                                gewicht: c.gewicht,
-                                preisPro100g: c.preisPro100g,
-                                becherMaterial: c.becherMaterial,
-                                becherGewicht: c.becherGewicht,
-                                loeffelMaterial: c.loeffelMaterial,
-                                loeffelGewicht: c.loeffelGewicht,
-                                ecoScore: c.ecoScore
-                            }));
-                            localStorage.setItem('eisdielenDaten', JSON.stringify(eisdielen));
-                            aktualisiereTabelle();
-                        }
-                    } else if (tempCloudData.length === 0 && eisdielen.length > 0) {
-                        eisdielen.forEach(e => ladeInCloudHoch(e));
-                    }
-                }, err => console.error("Sync Error", err));
-
-                zeigeToast("Echtzeit-Synchronisation gestartet!", "☁️");
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        async function ladeInCloudHoch(e) {
-            if (!window.db || !currentSyncKey) return;
-            try {
-                const coll = window.db.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'eisdielen');
-                const docRef = await window.db.addDoc(coll, {
-                    syncKey: currentSyncKey,
-                    localId: e.id,
-                    name: e.name,
-                    stadt: e.stadt,
-                    preis: e.preis,
-                    gewicht: e.gewicht,
-                    preisPro100g: e.preisPro100g,
-                    becherMaterial: e.becherMaterial,
-                    becherGewicht: e.becherGewicht,
-                    loeffelMaterial: e.loeffelMaterial,
-                    loeffelGewicht: e.loeffelGewicht,
-                    ecoScore: e.ecoScore,
-                    timestamp: Date.now()
-                });
-                e.cloudSaved = true;
-                e.cloudId = docRef.id;
-            } catch (err) {
-                console.error("Upload Error:", err);
-            }
-        }
-
-        function trenneCloudSync() {
-            if (window.unsubscribeFirestore) window.unsubscribeFirestore();
-            currentSyncKey = "";
-            localStorage.removeItem('eisdielenSyncKey');
-            document.getElementById('syncSchluessel').value = "";
-            document.getElementById('btnSyncTrennen').classList.add('hidden');
-            document.getElementById('syncStatusText').innerHTML = "<span>🔴</span> Status: Offline (Lokal auf diesem Gerät)";
-            zeigeToast("Verbindung getrennt", "🔌");
-        }
-
-        // --- HANDBUCH MODAL CONTROL ---
-
-        function oeffneHilfeModal() {
-            document.getElementById('hilfeModal').classList.remove('hidden');
-        }
-
-        function schliesseHilfeModal() {
-            document.getElementById('hilfeModal').classList.add('hidden');
-        }
-
-        // --- APP SYSTEM LOAD ---
-
-        window.onload = function() {
-            const gespeicherteDaten = localStorage.getItem('eisdielenDaten');
-            if (gespeicherteDaten) {
-                try { eisdielen = JSON.parse(gespeicherteDaten); } catch { eisdielen = []; }
-            }
-            
-            const aktiverKey = localStorage.getItem('eisdielenSyncKey');
-            if (aktiverKey) {
-                document.getElementById('syncSchluessel').value = aktiverKey;
-                setTimeout(() => verbindeCloudSync(), 1200);
-            }
-
-            toggleGewichtInput('becher');
-            toggleGewichtInput('loeffel');
-            aktualisiereTabelle();
-        };
-
-        function oeffneResetModal() { document.getElementById('resetModal').classList.remove('hidden'); }
-        function schliesseResetModal() { document.getElementById('resetModal').classList.add('hidden'); }
-
-        function datenResetten() {
-            eisdielen = [];
-            localStorage.removeItem('eisdielenDaten');
-            aktualisiereTabelle();
-            document.getElementById('ergebnisSektion').classList.add('hidden');
-            schliesseResetModal();
-            zeigeToast("Datenbank geleert", "🗑️");
-        }
-
-        function zeigeToast(meldung, icon = "✨") {
-            const toast = document.getElementById('toast');
-            const msg = document.getElementById('toastMessage');
-            const ico = document.getElementById('toastIcon');
-            msg.textContent = meldung; ico.textContent = icon;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-                toast.classList.remove('translate-y-0', 'opacity-100');
-            }, 3000);
-        }
-    </script>
-</body>
+    <template id="photoTemplate">
+      <figure class="photo-item">
+        <img alt="">
+        <button type="button" aria-label="Foto entfernen">×</button>
+      </figure>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
 </html>
-
-```
