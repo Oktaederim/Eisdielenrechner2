@@ -4,6 +4,7 @@ const DB_VERSION = 1;
 
 const form = document.querySelector("#entryForm");
 const entriesBody = document.querySelector("#entriesBody");
+const cameraInput = document.querySelector("#cameraInput");
 const photoInput = document.querySelector("#photoInput");
 const photoPreview = document.querySelector("#photoPreview");
 const photoTemplate = document.querySelector("#photoTemplate");
@@ -423,13 +424,17 @@ form.addEventListener("submit", async (event) => {
   resetForm();
 });
 
-photoInput.addEventListener("change", async () => {
-  const files = [...photoInput.files];
+async function addSelectedPhotos(input) {
+  const files = [...input.files];
+  if (!files.length) return;
   const photos = await Promise.all(files.map(resizeImage));
   draftPhotos.push(...photos);
-  photoInput.value = "";
+  input.value = "";
   renderPhotos();
-});
+}
+
+cameraInput.addEventListener("change", () => addSelectedPhotos(cameraInput));
+photoInput.addEventListener("change", () => addSelectedPhotos(photoInput));
 
 entriesBody.addEventListener("click", async (event) => {
   const button = event.target.closest("button");
