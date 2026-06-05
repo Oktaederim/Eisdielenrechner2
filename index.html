@@ -105,10 +105,16 @@
           </label>
 
           <div class="photo-zone">
-            <label class="file-label">
-              Fotos hinzufügen
-              <input id="photoInput" type="file" accept="image/*" capture="environment" multiple>
-            </label>
+            <div class="photo-actions">
+              <label class="file-label">
+                Kamera
+                <input id="cameraInput" type="file" accept="image/*" capture="environment">
+              </label>
+              <label class="file-label">
+                Mediathek
+                <input id="photoInput" type="file" accept="image/*" multiple>
+              </label>
+            </div>
             <div id="photoPreview" class="photo-preview" aria-live="polite"></div>
           </div>
 
