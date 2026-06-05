@@ -139,6 +139,12 @@ textarea:focus {
   gap: 10px;
 }
 
+.photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .file-label,
 .import-button {
   display: inline-flex;
@@ -187,13 +193,14 @@ textarea:focus {
   position: absolute;
   top: 5px;
   right: 5px;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border: 0;
   border-radius: 50%;
   background: rgba(24, 37, 31, 0.78);
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.35rem;
+  line-height: 1;
 }
 
 .result-strip {
