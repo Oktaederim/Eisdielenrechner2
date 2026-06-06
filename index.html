@@ -18,6 +18,21 @@
     </header>
 
     <main>
+      <section class="panel status-panel" aria-labelledby="statusTitle">
+        <div class="section-heading compact">
+          <h2 id="statusTitle">Daten</h2>
+          <p id="dataStatus">Die Einträge werden auf diesem Gerät gespeichert.</p>
+        </div>
+        <div class="button-row wrap">
+          <button class="secondary-button" id="exportJsonButton" type="button">iCloud-Sicherung erstellen</button>
+          <label class="import-button">
+            Sicherung laden
+            <input id="importInput" type="file" accept="application/json,.json">
+          </label>
+          <button class="secondary-button" id="exportCsvButton" type="button">Tabelle exportieren</button>
+        </div>
+      </section>
+
       <section class="panel form-panel" aria-labelledby="formTitle">
         <div class="section-heading">
           <h2 id="formTitle">Messung erfassen</h2>
@@ -58,18 +73,14 @@
             <input id="flavors" name="flavors" value="Vanille, Schokolade, Erdbeere">
           </label>
 
-          <div class="grid three">
+          <div class="grid two">
             <label>
               Gewicht mit Verpackung in g
               <input id="grossWeight" name="grossWeight" type="number" step="0.1" min="0" inputmode="decimal" required>
             </label>
             <label>
-              Bechergewicht in g
-              <input id="cupWeight" name="cupWeight" type="number" step="0.1" min="0" inputmode="decimal" required>
-            </label>
-            <label>
-              Löffelgewicht in g
-              <input id="spoonWeight" name="spoonWeight" type="number" step="0.1" min="0" inputmode="decimal" required>
+              Verpackungsgewicht gesamt in g
+              <input id="packagingWeight" name="packagingWeight" type="number" step="0.1" min="0" inputmode="decimal" required>
             </label>
           </div>
 
@@ -138,26 +149,10 @@
           </div>
 
           <div class="button-row">
-            <button class="primary-button" type="submit">Speichern</button>
+            <button class="primary-button" type="submit">Lokal speichern</button>
             <button class="secondary-button" id="clearButton" type="button">Zurücksetzen</button>
           </div>
         </form>
-      </section>
-
-      <section class="panel" aria-labelledby="actionsTitle">
-        <div class="section-heading compact">
-          <h2 id="actionsTitle">Daten und iCloud</h2>
-          <p>Exportierte Dateien können in iCloud Drive gespeichert und später wieder geladen werden.</p>
-        </div>
-        <div class="button-row wrap">
-          <button class="secondary-button" id="exportJsonButton" type="button">JSON exportieren</button>
-          <button class="secondary-button" id="exportCsvButton" type="button">CSV exportieren</button>
-          <button class="secondary-button" id="shareButton" type="button">Teilen</button>
-          <label class="import-button">
-            Laden
-            <input id="importInput" type="file" accept="application/json,.json">
-          </label>
-        </div>
       </section>
 
       <section class="panel" aria-labelledby="tableTitle">
