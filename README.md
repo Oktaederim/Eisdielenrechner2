@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/28649135/README.md)
 # Eisdielen-Rechner
 
 Mobile Web-App zum Erfassen und Vergleichen von Eis-Kugelgewichten, Preis je 100 g und Verpackungsdaten.
@@ -42,10 +41,11 @@ Danach kannst du die App wie eine normale App vom Home-Bildschirm starten.
 
 - Einträge werden im Browser lokal gespeichert.
 - Fotos können pro Messung hinzugefügt werden. Sie werden verkleinert gespeichert, damit die Datei handhabbar bleibt.
-- `JSON exportieren` erstellt eine Sicherungsdatei mit allen Einträgen und Fotos.
-- Diese JSON-Datei kann auf iPhone/iPad über die Teilen- oder Dateien-Funktion in iCloud Drive abgelegt werden.
-- Über `Laden` kann eine zuvor exportierte JSON-Datei wieder ausgewählt und ergänzt werden.
-- `CSV exportieren` erstellt eine Tabellen-Datei für Numbers, Excel oder Google Sheets. Fotos sind darin nicht enthalten, nur die Anzahl der Fotos.
+- `Lokal speichern` speichert den Eintrag zuerst auf dem aktuell genutzten Gerät.
+- `iCloud-Sicherung erstellen` erstellt eine Sicherungsdatei mit allen Einträgen und Fotos.
+- Diese Sicherungsdatei kann auf iPhone/iPad über die Teilen- oder Dateien-Funktion in iCloud Drive abgelegt werden.
+- `Sicherung laden` lädt eine zuvor erstellte Sicherungsdatei und ersetzt die lokalen Einträge durch diese Sicherung.
+- `Tabelle exportieren` erstellt eine CSV-Datei für Numbers, Excel oder Google Sheets. Fotos sind darin nicht enthalten, nur die Anzahl der Fotos.
 
 Wichtig: GitHub speichert nicht automatisch deine Messdaten. GitHub stellt nur die App bereit. Deine Messdaten liegen auf dem jeweiligen Gerät im Browser und können zusätzlich per JSON-Datei in iCloud Drive gesichert werden.
 
@@ -53,10 +53,10 @@ Wichtig: GitHub speichert nicht automatisch deine Messdaten. GitHub stellt nur d
 
 1. App auf iPhone/iPad öffnen.
 2. Messung eintragen und Fotos hinzufügen.
-3. Speichern.
-4. Regelmäßig `JSON exportieren` oder `Teilen` nutzen.
-5. Die JSON-Datei in iCloud Drive ablegen.
-6. Auf einem anderen Gerät über `Laden` dieselbe JSON-Datei importieren.
+3. `Lokal speichern` tippen.
+4. Regelmäßig `iCloud-Sicherung erstellen` nutzen.
+5. Die Sicherungsdatei in iCloud Drive ablegen.
+6. Auf einem anderen Gerät über `Sicherung laden` dieselbe Datei laden.
 
 ## Fairer Vergleich
 
@@ -65,12 +65,12 @@ Für vergleichbare Messungen sollten möglichst immer dieselben Bedingungen gelt
 - drei Kugeln: Vanille, Schokolade, Erdbeere
 - keine Sahne, Sauce oder Deko
 - Gesamtgewicht mit Becher und Löffel messen
-- Becher und Löffel separat wiegen oder später abziehen
+- Verpackung insgesamt wiegen und als Gesamtgewicht eintragen
 - Messunsicherheiten als Notiz erfassen
 
 ## Berechnungen
 
-- Nettogewicht Eis = Gesamtgewicht minus Bechergewicht minus Löffelgewicht
+- Nettogewicht Eis = Gesamtgewicht minus Verpackungsgewicht
 - Durchschnitt pro Kugel = Nettogewicht Eis geteilt durch Anzahl Kugeln
 - Preis je Kugel = Gesamtpreis geteilt durch Anzahl Kugeln
 - Preis je 100 g = Gesamtpreis geteilt durch Nettogewicht mal 100
