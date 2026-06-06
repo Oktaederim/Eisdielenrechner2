@@ -1,4 +1,4 @@
-const CACHE_NAME = "eisdielen-rechner-v2";
+const CACHE_NAME = "eisdielen-rechner-v4";
 const ASSETS = [
   "./",
   "./index.html",
