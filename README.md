@@ -42,7 +42,8 @@ Danach kannst du die App wie eine normale App vom Home-Bildschirm starten.
 - Einträge werden im Browser lokal gespeichert.
 - Fotos können pro Messung hinzugefügt werden. Sie werden verkleinert gespeichert, damit die Datei handhabbar bleibt.
 - `Lokal speichern` speichert den Eintrag zuerst auf dem aktuell genutzten Gerät.
-- `iCloud-Sicherung erstellen` erstellt eine Sicherungsdatei mit allen Einträgen und Fotos.
+- `iCloud-Sicherung teilen` öffnet auf iPhone/iPad den Teilen-Dialog, damit du die Sicherung in iCloud Drive oder Dateien ablegen kannst.
+- `Sicherungsdatei herunterladen` erstellt direkt eine JSON-Datei mit allen Einträgen und Fotos.
 - Diese Sicherungsdatei kann auf iPhone/iPad über die Teilen- oder Dateien-Funktion in iCloud Drive abgelegt werden.
 - `Sicherung laden` lädt eine zuvor erstellte Sicherungsdatei und ersetzt die lokalen Einträge durch diese Sicherung.
 - `Tabelle exportieren` erstellt eine CSV-Datei für Numbers, Excel oder Google Sheets. Fotos sind darin nicht enthalten, nur die Anzahl der Fotos.
@@ -54,7 +55,7 @@ Wichtig: GitHub speichert nicht automatisch deine Messdaten. GitHub stellt nur d
 1. App auf iPhone/iPad öffnen.
 2. Messung eintragen und Fotos hinzufügen.
 3. `Lokal speichern` tippen.
-4. Regelmäßig `iCloud-Sicherung erstellen` nutzen.
+4. Regelmäßig `iCloud-Sicherung teilen` oder `Sicherungsdatei herunterladen` nutzen.
 5. Die Sicherungsdatei in iCloud Drive ablegen.
 6. Auf einem anderen Gerät über `Sicherung laden` dieselbe Datei laden.
 
